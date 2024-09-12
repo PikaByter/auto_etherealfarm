@@ -122,8 +122,8 @@ function autoTranscension() {
         const timeElement = document.getElementsByClassName("efInfo")[0].childNodes[1]
         const timeStr = timeElement ? timeElement.innerText : "0s";
         const totalSeconds = parseTime(timeStr);
-        if (totalSeconds >= 2 * 3600 + 5 * 60) {
-            console.log("runtime > 2小时15分钟，auto transcension...");
+        if (totalSeconds >= 2 * 3600) {
+            console.log("runtime > 2h5m, auto transcension...");
             executeTranscension();
         } else {
             const currentTime = new Date().getTime();

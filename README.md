@@ -5,7 +5,7 @@ etherealfarm: https://github.com/lvandeve/etherealfarm
 - Auto activate weather
 - Auto pick up fern
 - Auto refresh brassica
-- Auto transcension at 2h5m
+- Auto transcension at 2h
 
 ## Test
 Currently tested only on version 0.14.1 (2024-09-09)
