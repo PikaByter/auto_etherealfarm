@@ -119,7 +119,7 @@ function executeTranscension() {
 function autoTranscension() {
     let lastLogTime = 0;
     function loopCheckTranscension() {
-        const timeElement = document.getElementsByClassName("efInfo efSeasonBgWinter")[0].childNodes[1];
+        const timeElement = document.getElementsByClassName("efInfo")[0].childNodes[1]
         const timeStr = timeElement ? timeElement.innerText : "0s";
         const totalSeconds = parseTime(timeStr);
         if (totalSeconds >= 2 * 3600 + 5 * 60) {
