@@ -8,12 +8,22 @@ function checkAndActivateWeather() {
             if (currentTime - lastLogTime >= 30000) {
                 let activeWeatherName= document.getElementsByClassName("efWeatherOn")[0].previousElementSibling.ariaLabel
                 let leftTime=document.getElementsByClassName("efWeatherOn")[0].textContent
-                console.log(`active ability: ${activeWeatherName}, ${leftTime}`);
+                console.log(`activeing ability: ${activeWeatherName}, ${leftTime}`);
                 lastLogTime = currentTime;
             }
         } else {
             let oneCoolDown = false;
+            let skipMist=false;
+            // skip mist if sporesProduceSpeed == 0/s
+            const sporesProduceSpeedText = document.getElementsByClassName("efInfo")[2].childNodes[2].innerText;
+            if (sporesProduceSpeedText == '0/s') {
+                skipMist=true;
+            }
             for (let i = 0; i < weatherEffects.length; i++) {
+                if (i === 1 && skipMist) {
+                    console.log('sporesProduceSpeed == 0/s, skip mist');
+                    continue;
+                }
                 const cooldownText = weatherEffects[i].parentElement.nextElementSibling.textContent;
                 if (cooldownText === '') {
                     let name=weatherEffects[i].parentElement.ariaLabel
@@ -123,7 +133,7 @@ function autoTranscension() {
         const timeStr = timeElement ? timeElement.innerText : "0s";
         const totalSeconds = parseTime(timeStr);
         if (totalSeconds >= 2 * 3600) {
-            console.log("runtime > 2h5m, auto transcension...");
+            console.log("runtime > 2h, auto transcension...");
             executeTranscension();
         } else {
             const currentTime = new Date().getTime();
@@ -140,4 +150,4 @@ function autoTranscension() {
 checkAndActivateWeather();
 autocClickFern();
 autocRefreshBrassica();
-autoTranscension();
+// autoTranscension();
