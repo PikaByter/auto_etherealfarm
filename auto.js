@@ -150,4 +150,4 @@ function autoTranscension() {
 checkAndActivateWeather();
 autocClickFern();
 autocRefreshBrassica();
-// autoTranscension();
+autoTranscension();
