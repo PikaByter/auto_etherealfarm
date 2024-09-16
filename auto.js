@@ -254,13 +254,15 @@ function changeFruitWhenGrowingUp() {
             // chcek if produce speed is almost the same as last time
             if (produceSpeed.substring(0,5) == lastProduceSpeed.substring(0,5)){
                 console.log(`fully grown up, change fruit back`);
+                // console.log(`last produce speed: ${lastProduceSpeed}, current produce speed: ${produceSpeed}`)
                 useFruitBack();
                 return;
             }else{
+                // console.log(`last produce speed: ${lastProduceSpeed}, current produce speed: ${produceSpeed}`)
                 lastProduceSpeed=produceSpeed;
             }
         }
-        setTimeout(loopCheckGrowingUp(lastProduceSpeed), 1000);
+        setTimeout(() => loopCheckGrowingUp(lastProduceSpeed), 3000);
     }
 
     function useFruitBack(){
