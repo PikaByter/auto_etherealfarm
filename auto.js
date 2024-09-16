@@ -224,8 +224,11 @@ function changeFruitWhenGrowingUp() {
         updateCurrentStage();
         if ( currentStage!= lastStage) {
             lastStage = currentStage;
-            console.log(`stage change to ${currentStage}, change fruit back to Growing fruit`)
-            useGrowingFruit();
+            // wait for 5s to make sure speed is enough for the new crop
+            setTimeout(() => {
+                console.log(`stage change to ${currentStage}, change fruit back to Growing fruit`);
+                useGrowingFruit();
+            }, 5000);
             return;
         }
         setTimeout(loopCheckStageChange, 3000);
