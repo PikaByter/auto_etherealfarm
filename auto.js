@@ -238,6 +238,7 @@ function changeFruitWhenGrowingUp() {
     
     function loopCheckGrowingUp(lastProduceSpeed) {
         let produceSpeed='';
+        let checkCrop='';
         switch (currentStage) {
             case GrowingStage.Seed:
                 checkCrop=CropTypes.seed;
@@ -286,7 +287,8 @@ let growStatus={
 
 let currentGrowStatus=growStatus.growing;
 function updateCurrentGrowingStatus(){
-    if (getCurrentStage() == GrowingStage.Growing){
+    updateCurrentStage()
+    if (currentStage() == GrowingStage.Growing){
         currentGrowStatus=growStatus.growing;
     }else{
         let fruit=document.getElementById("fruit_tab").innerText
