@@ -288,7 +288,7 @@ let growStatus={
 let currentGrowStatus=growStatus.growing;
 function updateCurrentGrowingStatus(){
     updateCurrentStage()
-    if (currentStage() == GrowingStage.Growing){
+    if (currentStage == GrowingStage.Growing){
         currentGrowStatus=growStatus.growing;
     }else{
         let fruit=document.getElementById("fruit_tab").innerText
