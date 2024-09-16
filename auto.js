@@ -2,6 +2,20 @@ function checkAndActivateWeather() {
     const weatherEffects = document.getElementsByClassName("efWeatherPerma");
     let lastLogTime = 0;
     function loopCheckWeather() {
+        updateCurrentGrowingStatus();
+        // tempGrowing do not active weather
+        if (currentGrowStatus===growStatus.grownUp || currentGrowStatus==growStatus.growing){
+            doWeathercheak();
+        }else{
+            const currentTime = new Date().getTime();
+            if (currentTime - lastLogTime >= 20000){
+                console.log(`currentGrowStatus is ${currentGrowStatus} skip weather check`);
+            }
+        }
+        setTimeout(loopCheckWeather, 2000);
+    }
+
+    function doWeathercheak(){
         const activeEffect = document.getElementsByClassName("efWeatherOn").length > 0;
         if (activeEffect) {
             const currentTime = new Date().getTime();
@@ -13,15 +27,10 @@ function checkAndActivateWeather() {
             }
         } else {
             let oneCoolDown = false;
-            let skipMist=false;
-            // skip mist if sporesProduceSpeed == 0/s
-            const sporesProduceSpeedText = document.getElementsByClassName("efInfo")[2].childNodes[2].innerText;
-            if (sporesProduceSpeedText == '0/s') {
-                skipMist=true;
-            }
+            updateCurrentStage();
             for (let i = 0; i < weatherEffects.length; i++) {
-                if (i === 1 && skipMist) {
-                    console.log('sporesProduceSpeed == 0/s, skip mist');
+                if (i === 1 && currentStage === GrowingStage.Seed ) {
+                    console.log('seed stage, skip mist');
                     continue;
                 }
                 const cooldownText = weatherEffects[i].parentElement.nextElementSibling.textContent;
@@ -34,7 +43,10 @@ function checkAndActivateWeather() {
                 }
             }
             if (!oneCoolDown) {
-                console.log('all weather are cooling down, default choose sun ability');
+                const currentTime = new Date().getTime();
+                if (currentTime - lastLogTime >= 20000){
+                    console.log('all weather are cooling down, default choose sun ability');
+                }
                 const weakWeather = Array.from(weatherEffects).filter(effect => 
                     window.getComputedStyle(effect).visibility === 'visible'
                 );
@@ -43,7 +55,6 @@ function checkAndActivateWeather() {
                 }
             }
         }
-        setTimeout(loopCheckWeather, 2000);
     }
     loopCheckWeather();
 }
@@ -124,6 +135,14 @@ function executeTranscension() {
     findAndClickTreeLevel();
     showTranscensionDialog();
     clickTranscensionButton();
+
+}
+
+// reset all state machines after transcension
+function resetAllStatus() {
+    currentStage = GrowingStage.Growing;
+    currentGrowStatus=growStatus.growing;
+    lastStage=GrowingStage.Growing;
 }
 
 function autoTranscension() {
@@ -135,6 +154,7 @@ function autoTranscension() {
         if (totalSeconds >= 2 * 3600) {
             console.log("runtime > 2h, auto transcension...");
             executeTranscension();
+            resetAllStatus();
         } else {
             const currentTime = new Date().getTime();
             if (currentTime - lastLogTime >= 600000) {
@@ -147,7 +167,153 @@ function autoTranscension() {
     loopCheckTranscension();
 }
 
+// The process consists of 3 stages: growth, seed, and spore. 
+// Except for the seed stage, the other two stages produce spores.
+// The initial stage is growth, followed by seed, and finally spore.
+let GrowingStage = {
+    Growing: "Growing",
+    Seed: "Seed",
+    Spore: "Spore",
+}
+let currentStage = GrowingStage.Growing;
+
+let CropTypes={
+    seed: 1,
+    spore: 2,
+}
+const produceSpeedIndexMap = {
+    [CropTypes.seed]: 1,
+    [CropTypes.spore]: 2,
+};
+
+const zeroSpeed='0/s';
+
+function updateCurrentStage() {
+    const sporesProduceSpeed = getProduceSpeed(CropTypes.spore);
+    switch (currentStage) {
+        case GrowingStage.Growing:
+            if (sporesProduceSpeed === zeroSpeed) {
+                currentStage = GrowingStage.Seed;
+            }
+            break;
+        case GrowingStage.Seed:
+            if (sporesProduceSpeed != zeroSpeed) {
+                currentStage = GrowingStage.Spore;
+            }
+            break;
+        case GrowingStage.Spore:
+            break;
+    }
+    return currentStage;
+}
+
+function getProduceSpeed(type){
+    let i= produceSpeedIndexMap[type] || 0;
+    return document.getElementsByClassName("efInfo")[i]?.childNodes[2]?.innerText || zeroSpeed;
+}
+
+// when change to seed or spore layout, wait for crops to grow
+// during this time, the produce speed is so lower then the produce speed of full grown up
+// because the curve of the produce speed is not linear
+// so we need to speed up the growth speed so we can reach the full grown up earlier
+let lastStage = GrowingStage.Growing;
+function changeFruitWhenGrowingUp() {
+    // check stage per 3s, change fruit when stage change
+    function loopCheckStageChange() {
+        updateCurrentStage();
+        if ( currentStage!= lastStage) {
+            lastStage = currentStage;
+            console.log(`stage change to ${currentStage}, change fruit back to Growing fruit`)
+            useGrowingFruit();
+            return;
+        }
+        setTimeout(loopCheckStageChange, 3000);
+    }
+
+    // use growing fruit
+    function useGrowingFruit(){
+        chooseFruit(0);
+        loopCheckGrowingUp('');
+    }
+    
+    function loopCheckGrowingUp(lastProduceSpeed) {
+        let produceSpeed='';
+        switch (currentStage) {
+            case GrowingStage.Seed:
+                checkCrop=CropTypes.seed;
+                break;
+            case GrowingStage.Spore:
+                checkCrop=CropTypes.spore;
+                break;
+        }
+        produceSpeed=getProduceSpeed(checkCrop);
+        if (lastProduceSpeed.length===0){
+            lastProduceSpeed=produceSpeed;
+        }else{
+            // chcek if produce speed is almost the same as last time
+            if (produceSpeed.substring(0,5) == lastProduceSpeed.substring(0,5)){
+                console.log(`fully grown up, change fruit back`);
+                useFruitBack();
+                return;
+            }else{
+                lastProduceSpeed=produceSpeed;
+            }
+        }
+        setTimeout(loopCheckGrowingUp(lastProduceSpeed), 1000);
+    }
+
+    function useFruitBack(){
+        switch (currentStage) {
+            case GrowingStage.Seed:
+                chooseFruit(1);
+                break;
+            case GrowingStage.Spore:
+                chooseFruit(2);
+                break;
+        }
+        // back to step 1
+        loopCheckStageChange();
+    }
+    // start auto machine
+    loopCheckStageChange();
+}
+
+let growStatus={
+    growing: "growing",
+    tempgrowing: "tempgrowing",
+    grownUp: "grownUp",
+}
+
+let currentGrowStatus=growStatus.growing;
+function updateCurrentGrowingStatus(){
+    if (getCurrentStage() == GrowingStage.Growing){
+        currentGrowStatus=growStatus.growing;
+    }else{
+        let fruit=document.getElementById("fruit_tab").innerText
+        if (fruit.includes('growing')){
+            currentGrowStatus=growStatus.tempgrowing;
+        }else{
+            currentGrowStatus=growStatus.grownUp;
+        }
+    }
+}
+
+function chooseFruit(fruitID) {
+    let allDiv = document.getElementsByTagName("div");
+    for (let i = 0; i < allDiv.length; i++) {
+        if (allDiv[i] && allDiv[i].hasAttribute('aria-label')) {
+            let ariaLabel = allDiv[i].getAttribute('aria-label');
+            if (ariaLabel.includes(`activate fruit ${fruitID}:`)) {
+                console.log(`${ariaLabel}`);
+                allDiv[i].click();
+                break;
+            }
+        }
+    }
+}
+
 checkAndActivateWeather();
 autocClickFern();
 autocRefreshBrassica();
 autoTranscension();
+changeFruitWhenGrowingUp();
