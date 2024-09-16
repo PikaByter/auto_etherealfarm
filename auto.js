@@ -9,6 +9,7 @@ function checkAndActivateWeather() {
         }else{
             const currentTime = new Date().getTime();
             if (currentTime - lastLogTime >= 20000){
+                lastLogTime = currentTime;
                 console.log(`currentGrowStatus is ${currentGrowStatus} skip weather check`);
             }
         }
