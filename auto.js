@@ -22,14 +22,13 @@ function checkAndActivateWeather() {
             if (currentTime - lastLogTime >= 30000) {
                 let activeWeatherName= document.getElementsByClassName("efWeatherOn")[0].previousElementSibling.ariaLabel
                 let leftTime=document.getElementsByClassName("efWeatherOn")[0].textContent
-                console.log(`activeing ability: ${activeWeatherName}, ${leftTime}`);
+                console.log(`activeing ${activeWeatherName}, ${leftTime}`);
                 lastLogTime = currentTime;
             }
         } else {
             let oneCoolDown = false;
             for (let i = 0; i < weatherEffects.length; i++) {
                 if (i === 1 && currentStage === GrowingStage.Seed ) {
-                    console.log('seed stage, skip mist');
                     continue;
                 }
                 const cooldownText = weatherEffects[i].parentElement.nextElementSibling.textContent;
