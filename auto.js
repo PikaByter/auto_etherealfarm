@@ -172,7 +172,12 @@ function autoUpdateCurrentStage() {
         switch (currentStage) {
             case GrowingStage.Growing:
                 if (sporesProduceSpeed === zeroSpeed) {
-                    currentStage = GrowingStage.Seed;
+                    // Wait for 1 second and check again. If it is still 0, then confirm the transition.
+                    setTimeout(() => {
+                        if (getProduceSpeed(CropTypes.spore) === zeroSpeed) {
+                            currentStage = GrowingStage.Seed;
+                        }
+                    }, 1000);
                 }
                 break;
             case GrowingStage.Seed:
