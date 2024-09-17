@@ -227,14 +227,17 @@ function getProduceSpeed(type){
 function changeFruitWhenGrowingUp() {
     // check stage per 3s, change fruit when stage change
     function loopCheckStageChange(lastStage) {
-        if ((currentStage == GrowingStage.Seed && lastStage == GrowingStage.Growing) ||
-            (currentStage == GrowingStage.Spore && lastStage == GrowingStage.Seed)) {
+        function updateStageAndUseFruit() {
             lastStage = currentStage;
-            // wait for 5s to make sure speed is enough for the new crop
-            setTimeout(() => {
-                console.log(`stage change to ${currentStage}, change fruit back to Growing fruit`);
-                useGrowingFruit();
-            }, 5000);
+            console.log(`stage change to ${currentStage}, change fruit back to Growing fruit`);
+            useGrowingFruit();
+        }
+        if (currentStage == GrowingStage.Seed && lastStage == GrowingStage.Growing){
+            console.log('wait for 20s to make sure seed is enough for the new crops');
+            setTimeout(() => {updateStageAndUseFruit()}, 20000);
+            return;
+        }else if (currentStage == GrowingStage.Spore && lastStage == GrowingStage.Seed) {
+            updateStageAndUseFruit()
             return;
         }
         setTimeout(() => loopCheckStageChange(lastStage), 3000);
