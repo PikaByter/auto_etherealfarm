@@ -276,8 +276,9 @@ function changeFruitWhenGrowingUp() {
                 chooseFruit(2);
                 break;
         }
-        // back to step 1
-        loopCheckStageChange(currentStage);
+        // wait for status to be updated
+        // then go back to step 1
+        setTimeout(() => loopCheckStageChange(currentStage), 3000);
     }
     // start auto machine
     loopCheckStageChange(GrowingStage.Growing);
