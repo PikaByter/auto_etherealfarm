@@ -1,51 +1,57 @@
 # auto_etherealfarm
-etherealfarm: https://github.com/lvandeve/etherealfarm
+[etherealfarm](https://github.com/lvandeve/etherealfarm)
 
 ## Prerequisites
-- normally, every season need 3 layout for 3 stage
-    - growing, to unlock the highest berry && update tree
-    - seed, to collect seeds && update crops
-    - spore, to collect spores && update tree
-- the curve of the produce is not linear, so we should wait until main crops fully grown
-- I define 3 grow stages:
-    - growing, when you're using the growing layout
-    - tempgrowing, when you're using the seed or spore layout, but you'er still waiting for the main crops fully grown
-    - grownUp, when the  main crops fully grown
-## What can this repo do?
-- Auto activate weather
-    - if you're in tempgrowing stage, skip check
-    - check if sun is already, if yes, activate sun
-    - then, check if mist is already, if yes, activate mist(when sporesProduceSpeed == 0/s,skip mist)
-    - then, check if rainbow is already, if yes, activate rainbow
-    - if they are all cooling down, default choose sun as week weather
-- Auto pick up fern
-    - check per 5s
-- Auto refresh brassica
-    - refresh per 10m
-- Auto transcension at 2h
-- Auto change fruit when stage changed
-    - When you change stage to seed, auto-action would use seed fruit,seed layout, but you should use growing fruit, because it can help you reach the highest produce faster, and after that, you should change fruit back
-    - When you change the stage to spore, you also need to use the growing fruit template temporarily
-    - to use this function, you should put your fruit like this
-        - growing fruit in fruit storage slot 1, named "growing"
-        - seed fruit in fruit storage slot 2
-        - spored fruit in fruit storage slot 3
+- Typically, each season requires three layouts for three stages:
+  - **Growing**: To unlock the highest berry yield and update trees
+  - **Seed**: To collect seeds and update crops
+  - **Spore**: To collect spores and update trees
+- The production curve is not linear, so we should wait until the main crops are fully grown.
+- I define three growth stages:
+  - **Growing**: When using the growing layout
+  - **TempGrowing**: When using the seed or spore layout, but still waiting for the main crops to be fully grown
+  - **GrownUp**: When the main crops are fully grown
+
+## What Can This Repo Do?
+- **Auto Activate Weather**
+  - If in the TempGrowing stage, skip the check.
+  - Check if the sun is available; if yes, activate the sun.
+  - Then, check if the mist is available; if yes, activate the mist (skip mist in Seed stage).
+  - Finally, check if the rainbow is available; if yes, activate the rainbow.
+  - If all are cooling down, default to choosing the sun as the weekly weather.
+- **Auto Pick Up Fern**
+  - Check every 5 seconds.
+- **Auto Refresh Brassica**
+  - Refresh every 10 minutes.
+- **Auto Transcension at 2 Hours**
+- **Auto Change Fruit When Stage Changes**
+  - When changing to the Seed stage, auto-action uses seed fruit and seed layout, but you should use growing fruit because it helps reach the highest yield faster. Afterward, switch back to seed fruit.
+  - When changing to the Spore stage, you should also use the growing fruit template temporarily.
+  - To use this function, arrange your fruits as follows:
+    - Growing fruit in fruit storage slot 1, named "growing"
+    - Seed fruit in fruit storage slot 2
+    - Spore fruit in fruit storage slot 3
 
 ## Test
-Currently tested only on version 0.14.1 (2024-09-09)
+Currently tested only on version 0.14.1 (2024-09-09).
 
-## How to use it
+## How to Use It
 You can run it in the Chrome console or use it with Tampermonkey.
-- copy the code
-- paste in Chrome console or Tampermonkey editor
-- run!
+- Copy the code.
+- Paste it into the Chrome console or the Tampermonkey editor.
+- Run it!
 
 ## TODO
-- [ ] config trigger for transcension
-- [ ] add page button to configure all the frequencies and functions
-- [x] legacy activate weather, such as seed plant would not activate mist
-- [x] When switching to seed, keep the growing speed fruit until the end of the growth phase, then switch back to seed fruit. During this period, do not enable weather. The same applies when switching to spore.
-- [ ] update default weather auto selection: During the seed stage, try two types of weather and choose the one with the highest seed yield. For the other two stages, choose the weather with the hiteshest spore yield.
-- [ ] Auto-transcension is determined by the average resin yield. When the stage is spore and the crop is grown up, check every ten seconds. If the yield continues to decrease for 4 minutes, initiate auto-transcension.
-- [ ] publish to Tampermonkey
-- [ ] add CI to auto publish
+### Features
+- [x] Legacy activate weather, such as Seed stages not activating mist.
+- [x] When switching to Seed stage, keep the growing speed fruit until the end of the growth phase, then switch back to seed fruit. During this period, do not enable weather. The same applies when switching to Spore.
+- [ ] Update default weather auto-selection: During the Seed stage, try two types of weather and choose the one with the highest seed yield. For the other two stages, choose the weather with the highest spore yield.
+- [ ] Auto-transcension is determined by the average resin yield. When the stage is Spore and the crop is grown up, check every ten seconds. If the yield continues to decrease for 4 minutes, initiate auto-transcension.
+
+### Usability
+- [ ] Configure triggers for transcension.
+- [ ] Add a page button to configure all frequencies and functions.
+
+### CICD
+- [ ] Publish to Tampermonkey.
+- [ ] Add CI to auto-publish.
