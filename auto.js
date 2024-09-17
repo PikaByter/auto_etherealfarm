@@ -222,10 +222,9 @@ function getProduceSpeed(type){
 // during this time, the produce speed is so lower then the produce speed of full grown up
 // because the curve of the produce speed is not linear
 // so we need to speed up the growth speed so we can reach the full grown up earlier
-let lastStage = GrowingStage.Growing;
 function changeFruitWhenGrowingUp() {
     // check stage per 3s, change fruit when stage change
-    function loopCheckStageChange() {
+    function loopCheckStageChange(lastStage) {
         if ((currentStage == GrowingStage.Seed && lastStage == GrowingStage.Growing) ||
             (currentStage == GrowingStage.Spore && lastStage == GrowingStage.Seed)) {
             lastStage = currentStage;
@@ -236,7 +235,7 @@ function changeFruitWhenGrowingUp() {
             }, 5000);
             return;
         }
-        setTimeout(loopCheckStageChange, 3000);
+        setTimeout(() => loopCheckStageChange(lastStage), 3000);
     }
 
     // use growing fruit
@@ -284,10 +283,10 @@ function changeFruitWhenGrowingUp() {
                 break;
         }
         // back to step 1
-        loopCheckStageChange();
+        loopCheckStageChange(GrowingStage.Growing);
     }
     // start auto machine
-    loopCheckStageChange();
+    loopCheckStageChange(GrowingStage.Growing);
 }
 
 let growStatus={
