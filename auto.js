@@ -34,7 +34,7 @@ function checkAndActivateWeather() {
                 const cooldownText = weatherEffects[i].parentElement.nextElementSibling.textContent;
                 if (cooldownText === '') {
                     let name=weatherEffects[i].parentElement.ariaLabel
-                    console.log(`actice ${name} `);
+                    console.log(`active ${name} `);
                     weatherEffects[i].click();
                     oneCoolDown = true;
                     break;
