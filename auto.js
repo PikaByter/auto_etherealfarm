@@ -283,7 +283,7 @@ function changeFruitWhenGrowingUp() {
                 break;
         }
         // back to step 1
-        loopCheckStageChange(GrowingStage.Growing);
+        loopCheckStageChange(currentStage);
     }
     // start auto machine
     loopCheckStageChange(GrowingStage.Growing);
