@@ -49,6 +49,9 @@ You can run it in the Chrome console or use it with Tampermonkey.
 - [x] When switching to Seed stage, keep the growing speed fruit until the end of the growth phase, then switch back to seed fruit. During this period, do not enable weather. The same applies when switching to Spore.
 - [ ] Update default weather auto-selection: During the Seed stage, try two types of weather and choose the one with the highest seed yield. For the other two stages, choose the weather with the highest spore yield.
 - [x] Auto-transcension is determined by the average resin yield. When the stage is Spore and the crop is grown up, check every ten seconds. If the yield continues to decrease for 3 minutes, initiate auto-transcension.
+- [ ] 从当前页面获取当前stage，而不是通过自动机切换，因为使用自动机只能在种植stage运行代码。
+    - 当前有孢子产量，且
+- [ ] 如果已经是目标种子，则不点击
 
 ### Usability
 - [ ] Configure triggers for transcension.

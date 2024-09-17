@@ -195,6 +195,7 @@ function autoUpdateCurrentStage() {
                     if (lastTreeLevel === null) {
                         lastTreeLevel = currentLevel;
                     } else {
+                        // console.log(`lastTreeLevel: ${lastTreeLevel}, currentLevel: ${currentLevel}`);
                         if (currentLevel < lastTreeLevel) {
                             currentStage = GrowingStage.Growing;
                         } 
@@ -231,6 +232,7 @@ function changeFruitWhenGrowingUp() {
         }
         // recover from tempgrowing
         if (currentGrowStatus===growStatus.tempgrowing){
+            console.log('recover from tempgrowing');
             updateStageAndUseFruit();
             return;
         }
@@ -306,7 +308,16 @@ function autoUpdateCurrentGrowStatus(){
         }else{
             let fruit=document.getElementById("fruit_tab").innerText
             if (fruit.includes('growing')){
-                currentGrowStatus=growStatus.tempgrowing;
+                // Wait for 1s to confirm the current status. If stage is still not Growing, then confirm tempgrowing.
+                // Without this reconfirmation, when auto-transaction is excuted, fruit would change to growing immediately,
+                // but since the state updates every 100ms, currentStage would still be at Spore.
+                // Therefore, this would incorrectly assume currentGrowStatus is tempgrowing,
+                // whereas it should actually be growing.
+                setTimeout(() => {
+                    if (currentStage != GrowingStage.Growing) {
+                        currentGrowStatus=growStatus.tempgrowing;
+                    }
+                }, 1000);
             }else{
                 currentGrowStatus=growStatus.grownUp;
             }
