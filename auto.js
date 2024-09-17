@@ -2,7 +2,6 @@ function checkAndActivateWeather() {
     const weatherEffects = document.getElementsByClassName("efWeatherPerma");
     let lastLogTime = 0;
     function loopCheckWeather() {
-        updateCurrentGrowingStatus();
         // tempGrowing do not active weather
         if (currentGrowStatus===growStatus.grownUp || currentGrowStatus==growStatus.growing){
             doWeathercheak();
@@ -28,7 +27,6 @@ function checkAndActivateWeather() {
             }
         } else {
             let oneCoolDown = false;
-            updateCurrentStage();
             for (let i = 0; i < weatherEffects.length; i++) {
                 if (i === 1 && currentStage === GrowingStage.Seed ) {
                     console.log('seed stage, skip mist');
@@ -141,7 +139,7 @@ function executeTranscension() {
 
 // reset all state machines after transcension
 function resetAllStatus() {
-    currentStage = GrowingStage.Growing;
+    autoUpdateCurrentStage(initFlag=true);
     currentGrowStatus=growStatus.growing;
     lastStage=GrowingStage.Growing;
 }
@@ -176,7 +174,6 @@ let GrowingStage = {
     Seed: "Seed",
     Spore: "Spore",
 }
-let currentStage = GrowingStage.Growing;
 
 let CropTypes={
     seed: 1,
@@ -189,23 +186,30 @@ const produceSpeedIndexMap = {
 
 const zeroSpeed='0/s';
 
-function updateCurrentStage() {
-    const sporesProduceSpeed = getProduceSpeed(CropTypes.spore);
-    switch (currentStage) {
-        case GrowingStage.Growing:
-            if (sporesProduceSpeed === zeroSpeed) {
-                currentStage = GrowingStage.Seed;
-            }
-            break;
-        case GrowingStage.Seed:
-            if (sporesProduceSpeed != zeroSpeed) {
-                currentStage = GrowingStage.Spore;
-            }
-            break;
-        case GrowingStage.Spore:
-            break;
+let currentStage = GrowingStage.Growing;
+function autoUpdateCurrentStage(initFlag=false) {
+    function loopCheckCurrentStage() {
+        const sporesProduceSpeed = getProduceSpeed(CropTypes.spore);
+        switch (currentStage) {
+            case GrowingStage.Growing:
+                if (sporesProduceSpeed === zeroSpeed) {
+                    currentStage = GrowingStage.Seed;
+                }
+                break;
+            case GrowingStage.Seed:
+                if (sporesProduceSpeed != zeroSpeed) {
+                    currentStage = GrowingStage.Spore;
+                }
+                break;
+            case GrowingStage.Spore:
+                if (initFlag){
+                    currentStage = GrowingStage.Growing;
+                }
+                break;
+        }
+        setTimeout(loopCheckCurrentStage, 100);
     }
-    return currentStage;
+    loopCheckCurrentStage();
 }
 
 function getProduceSpeed(type){
@@ -221,7 +225,6 @@ let lastStage = GrowingStage.Growing;
 function changeFruitWhenGrowingUp() {
     // check stage per 3s, change fruit when stage change
     function loopCheckStageChange() {
-        updateCurrentStage();
         if ( currentStage!= lastStage) {
             lastStage = currentStage;
             // wait for 5s to make sure speed is enough for the new crop
@@ -291,19 +294,47 @@ let growStatus={
     grownUp: "grownUp",
 }
 
-let currentGrowStatus=growStatus.growing;
-function updateCurrentGrowingStatus(){
-    updateCurrentStage()
-    if (currentStage == GrowingStage.Growing){
-        currentGrowStatus=growStatus.growing;
-    }else{
-        let fruit=document.getElementById("fruit_tab").innerText
-        if (fruit.includes('growing')){
-            currentGrowStatus=growStatus.tempgrowing;
-        }else{
-            currentGrowStatus=growStatus.grownUp;
+function autoUpdateCurrentStage(initFlag=false) {
+    function loopCheckCurrentStage() {
+        const sporesProduceSpeed = getProduceSpeed(CropTypes.spore);
+        switch (currentStage) {
+            case GrowingStage.Growing:
+                if (sporesProduceSpeed === zeroSpeed) {
+                    currentStage = GrowingStage.Seed;
+                }
+                break;
+            case GrowingStage.Seed:
+                if (sporesProduceSpeed != zeroSpeed) {
+                    currentStage = GrowingStage.Spore;
+                }
+                break;
+            case GrowingStage.Spore:
+                if (initFlag){
+                    currentStage = GrowingStage.Growing;
+                }
+                break;
         }
+        setTimeout(loopCheckCurrentStage, 100);
     }
+    loopCheckCurrentStage();
+}
+
+let currentGrowStatus=growStatus.growing;
+function autoUpdateCurrentGrowStatus(){
+    function loopCheckCurrentGrowStatus() {
+        if (currentStage == GrowingStage.Growing){
+            currentGrowStatus=growStatus.growing;
+        }else{
+            let fruit=document.getElementById("fruit_tab").innerText
+            if (fruit.includes('growing')){
+                currentGrowStatus=growStatus.tempgrowing;
+            }else{
+                currentGrowStatus=growStatus.grownUp;
+            }
+        }
+        setTimeout(loopCheckCurrentGrowStatus, 100);
+    }
+    loopCheckCurrentGrowStatus();
 }
 
 function chooseFruit(fruitID) {
@@ -324,4 +355,6 @@ checkAndActivateWeather();
 autocClickFern();
 autocRefreshBrassica();
 autoTranscension();
+autoUpdateCurrentStage();
+autoUpdateCurrentGrowStatus();
 changeFruitWhenGrowingUp();
