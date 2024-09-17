@@ -179,6 +179,7 @@ let CropTypes={
     seed: 1,
     spore: 2,
 }
+
 const produceSpeedIndexMap = {
     [CropTypes.seed]: 1,
     [CropTypes.spore]: 2,
@@ -225,7 +226,8 @@ let lastStage = GrowingStage.Growing;
 function changeFruitWhenGrowingUp() {
     // check stage per 3s, change fruit when stage change
     function loopCheckStageChange() {
-        if ( currentStage!= lastStage) {
+        if ((currentStage == GrowingStage.Seed && lastStage == GrowingStage.Growing) ||
+            (currentStage == GrowingStage.Spore && lastStage == GrowingStage.Seed)) {
             lastStage = currentStage;
             // wait for 5s to make sure speed is enough for the new crop
             setTimeout(() => {
