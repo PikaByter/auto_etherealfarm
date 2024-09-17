@@ -162,11 +162,6 @@ let CropTypes={
     spore: 2,
 }
 
-const produceSpeedIndexMap = {
-    [CropTypes.seed]: 1,
-    [CropTypes.spore]: 2,
-};
-
 const zeroSpeed='0/s';
 
 let currentStage = GrowingStage.Growing;
@@ -206,6 +201,10 @@ function autoUpdateCurrentStage() {
 }
 
 function getProduceSpeed(type){
+    const produceSpeedIndexMap = {
+        [CropTypes.seed]: 1,
+        [CropTypes.spore]: 2,
+    };
     let i= produceSpeedIndexMap[type] || 0;
     return document.getElementsByClassName("efInfo")[i]?.childNodes[2]?.innerText || zeroSpeed;
 }
@@ -221,6 +220,11 @@ function changeFruitWhenGrowingUp() {
             lastStage = currentStage;
             console.log(`stage change to ${currentStage}, change fruit back to Growing fruit`);
             useGrowingFruit();
+        }
+        // recover from tempgrowing
+        if (currentGrowStatus===growStatus.tempgrowing){
+            updateStageAndUseFruit();
+            return;
         }
         if (currentStage == GrowingStage.Seed && lastStage == GrowingStage.Growing){
             console.log('wait for 20s to make sure seed is enough for the new crops');
@@ -241,16 +245,11 @@ function changeFruitWhenGrowingUp() {
     
     function loopCheckGrowingUp(lastProduceSpeed) {
         let produceSpeed='';
-        let checkCrop='';
-        switch (currentStage) {
-            case GrowingStage.Seed:
-                checkCrop=CropTypes.seed;
-                break;
-            case GrowingStage.Spore:
-                checkCrop=CropTypes.spore;
-                break;
-        }
-        produceSpeed=getProduceSpeed(checkCrop);
+        const stageCropCheckMap = {
+            [GrowingStage.Seed]: CropTypes.seed,
+            [GrowingStage.Spore]: CropTypes.spore,
+        };
+        produceSpeed=getProduceSpeed(stageCropCheckMap[currentStage]);
         if (lastProduceSpeed.length===0){
             lastProduceSpeed=produceSpeed;
         }else{
