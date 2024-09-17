@@ -22,7 +22,7 @@ function checkAndActivateWeather() {
             if (currentTime - lastLogTime >= 30000) {
                 let activeWeatherName= document.getElementsByClassName("efWeatherOn")[0].previousElementSibling.ariaLabel
                 let leftTime=document.getElementsByClassName("efWeatherOn")[0].textContent
-                console.log(`activeing ${activeWeatherName}, ${leftTime}`);
+                console.log(`activating ${activeWeatherName}, ${leftTime}`);
                 lastLogTime = currentTime;
             }
         } else {
