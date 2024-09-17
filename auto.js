@@ -137,13 +137,6 @@ function executeTranscension() {
 
 }
 
-// reset all state machines after transcension
-function resetAllStatus() {
-    autoUpdateCurrentStage(initFlag=true);
-    currentGrowStatus=growStatus.growing;
-    lastStage=GrowingStage.Growing;
-}
-
 function autoTranscension() {
     let lastLogTime = 0;
     function loopCheckTranscension() {
@@ -153,7 +146,6 @@ function autoTranscension() {
         if (totalSeconds >= 2 * 3600) {
             console.log("runtime > 2h, auto transcension...");
             executeTranscension();
-            resetAllStatus();
         } else {
             const currentTime = new Date().getTime();
             if (currentTime - lastLogTime >= 600000) {
@@ -188,7 +180,8 @@ const produceSpeedIndexMap = {
 const zeroSpeed='0/s';
 
 let currentStage = GrowingStage.Growing;
-function autoUpdateCurrentStage(initFlag=false) {
+function autoUpdateCurrentStage() {
+    let lastTreeLevel = null;
     function loopCheckCurrentStage() {
         const sporesProduceSpeed = getProduceSpeed(CropTypes.spore);
         switch (currentStage) {
@@ -203,8 +196,17 @@ function autoUpdateCurrentStage(initFlag=false) {
                 }
                 break;
             case GrowingStage.Spore:
-                if (initFlag){
-                    currentStage = GrowingStage.Growing;
+                let treeLevel = document.getElementsByClassName("efInfo")[0].innerText;
+                if (treeLevel.includes('level')) {
+                    let currentLevel = parseInt(treeLevel.split(' ')[1]);
+                    if (lastTreeLevel === null) {
+                        lastTreeLevel = currentLevel;
+                    } else {
+                        if (currentLevel < lastTreeLevel) {
+                            currentStage = GrowingStage.Growing;
+                        } 
+                        lastTreeLevel = currentLevel;
+                    }
                 }
                 break;
         }
@@ -293,31 +295,6 @@ let growStatus={
     growing: "growing",
     tempgrowing: "tempgrowing",
     grownUp: "grownUp",
-}
-
-function autoUpdateCurrentStage(initFlag=false) {
-    function loopCheckCurrentStage() {
-        const sporesProduceSpeed = getProduceSpeed(CropTypes.spore);
-        switch (currentStage) {
-            case GrowingStage.Growing:
-                if (sporesProduceSpeed === zeroSpeed) {
-                    currentStage = GrowingStage.Seed;
-                }
-                break;
-            case GrowingStage.Seed:
-                if (sporesProduceSpeed != zeroSpeed) {
-                    currentStage = GrowingStage.Spore;
-                }
-                break;
-            case GrowingStage.Spore:
-                if (initFlag){
-                    currentStage = GrowingStage.Growing;
-                }
-                break;
-        }
-        setTimeout(loopCheckCurrentStage, 100);
-    }
-    loopCheckCurrentStage();
 }
 
 let currentGrowStatus=growStatus.growing;
