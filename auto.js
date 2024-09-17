@@ -82,25 +82,6 @@ function autocRefreshBrassica() {
     loopRefresh();
 }
 
-function parseTime(timeStr) {
-    let totalSeconds = 0;
-    const timeParts = timeStr.match(/(\d+)([hms])/g);
-    if (timeParts) {
-        for (const part of timeParts) {
-            const match = part.match(/(\d+)([hms])/);
-            if (match) {
-                const [_, num, unit] = match;
-                switch (unit) {
-                    case 'h': totalSeconds += parseInt(num) * 3600; break;
-                    case 'm': totalSeconds += parseInt(num) * 60; break;
-                    case 's': totalSeconds += parseInt(num); break;
-                }
-            }
-        }
-    }
-    return totalSeconds;
-}
-
 function findAndClickTreeLevel() {
     const pixelatedElements = document.getElementsByTagName('div');
     for (let i = 0; i < pixelatedElements.length; i++) {
@@ -133,26 +114,36 @@ function executeTranscension() {
     findAndClickTreeLevel();
     showTranscensionDialog();
     clickTranscensionButton();
-
 }
 
 function autoTranscension() {
-    let lastLogTime = 0;
+    const CHECK_INTERVAL_MS = 10000;
+    const DECLINE_THRESHOLD_MINUTES = 3;
+    const DECLINE_THRESHOLD_MS = DECLINE_THRESHOLD_MINUTES * 60 * 1000;
+    let resinSpeedHistory = [];
     function loopCheckTranscension() {
-        const timeElement = document.getElementsByClassName("efInfo")[0].childNodes[1]
-        const timeStr = timeElement ? timeElement.innerText : "0s";
-        const totalSeconds = parseTime(timeStr);
-        if (totalSeconds >= 2 * 3600) {
-            console.log("runtime > 2h, auto transcension...");
-            executeTranscension();
-        } else {
-            const currentTime = new Date().getTime();
-            if (currentTime - lastLogTime >= 600000) {
-                console.log(`current runtime: ${timeStr}, runtime > 2h5m will autotranscension`);
-                lastLogTime = currentTime;
+        if (currentStage === GrowingStage.Spore && currentGrowStatus === growStatus.grownUp) {
+            const resinSpeedStr = document.getElementsByClassName("efInfo")[3].childNodes[3].innerText.substring(0, 6);
+            const resinSpeed = parseFloat(resinSpeedStr);
+            // console.log(`Current resin speed: ${resinSpeed}`);
+            resinSpeedHistory.push(resinSpeed);
+            // console.log(`Resin speed history: ${resinSpeedHistory}`);
+            if (resinSpeedHistory.length > (DECLINE_THRESHOLD_MS / CHECK_INTERVAL_MS)) {
+                resinSpeedHistory.shift();
+                // console.log(`Trimmed resin speed history: ${resinSpeedHistory}`);
+            }
+            const isDeclining = resinSpeedHistory.every((speed, index) => 
+                index === 0 || speed < resinSpeedHistory[index - 1]
+            );
+            // console.log(`Is declining: ${isDeclining}`);
+            if (isDeclining && resinSpeedHistory.length >= (DECLINE_THRESHOLD_MS / CHECK_INTERVAL_MS)) {
+                console.log(`Resin speed has been declining for ${DECLINE_THRESHOLD_MINUTES} minutes.`);
+                console.log(`resin speed history: ${resinSpeedHistory}`);
+                console.log(`Executing transcension...`);
+                executeTranscension();
             }
         }
-        setTimeout(loopCheckTranscension, 60000);
+        setTimeout(loopCheckTranscension, CHECK_INTERVAL_MS);
     }
     loopCheckTranscension();
 }

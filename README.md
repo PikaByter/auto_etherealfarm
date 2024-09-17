@@ -23,7 +23,9 @@
   - Check every 5 seconds.
 - **Auto Refresh Brassica**
   - Refresh every 10 minutes.
-- **Auto Transcension at 2 Hours**
+- **Automatic Transcension to after reach highest average resin yield**
+  - If you are in the Spore stage and fully grown, record the current average resin yield every 10 seconds.
+  - If the average yield continues to decrease for 3 minutes, trigger transcension.
 - **Auto Change Fruit When Stage Changes**
   - When changing to the Seed stage, auto-action uses seed fruit and seed layout, but you should use growing fruit because it helps reach the highest yield faster. Afterward, switch back to seed fruit.
   - When changing to the Spore stage, you should also use the growing fruit template temporarily.
@@ -46,7 +48,7 @@ You can run it in the Chrome console or use it with Tampermonkey.
 - [x] Legacy activate weather, such as Seed stages not activating mist.
 - [x] When switching to Seed stage, keep the growing speed fruit until the end of the growth phase, then switch back to seed fruit. During this period, do not enable weather. The same applies when switching to Spore.
 - [ ] Update default weather auto-selection: During the Seed stage, try two types of weather and choose the one with the highest seed yield. For the other two stages, choose the weather with the highest spore yield.
-- [ ] Auto-transcension is determined by the average resin yield. When the stage is Spore and the crop is grown up, check every ten seconds. If the yield continues to decrease for 4 minutes, initiate auto-transcension.
+- [x] Auto-transcension is determined by the average resin yield. When the stage is Spore and the crop is grown up, check every ten seconds. If the yield continues to decrease for 3 minutes, initiate auto-transcension.
 
 ### Usability
 - [ ] Configure triggers for transcension.
