@@ -186,7 +186,10 @@ function autoUpdateCurrentStage() {
                 }
                 break;
             case GrowingStage.Spore:
-                let treeLevel = document.getElementsByClassName("efInfo")[0].childNodes[0].innerText;
+                let treeLevel;
+                if (treeLevel === undefined) {
+                    treeLevel = document.getElementsByClassName("efInfo")[0]?.childNodes[0]?.innerText || '';
+                }
                 if (treeLevel.includes('level')) {
                     let currentLevel = parseInt(treeLevel.split(' ')[1]);
                     if (lastTreeLevel === null) {
