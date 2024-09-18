@@ -1,3 +1,14 @@
+// ==UserScript==
+// @name         etherealfarm hacker
+// @namespace    http://tampermonkey.net/
+// @version      alpha-0.0.1
+// @description  auto active weather, auto pick up fern, auto-transcension, auto change fruit && auto refresh brassica
+// @author       pikaByter
+// @match        https://lodev.org/etherealfarm/
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=lodev.org
+// @grant        none
+// ==/UserScript==
+
 function checkAndActivateWeather() {
     const weatherEffects = document.getElementsByClassName("efWeatherPerma");
     let lastLogTime = 0;
