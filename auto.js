@@ -127,6 +127,7 @@ function autoTranscension() {
             const resinSpeed = parseFloat(resinSpeedStr);
             // console.log(`Current resin speed: ${resinSpeed}`);
             resinSpeedHistory.push(resinSpeed);
+            console.log(`Spore Grown up, Current resin speed: ${resinSpeed}`);
             // console.log(`Resin speed history: ${resinSpeedHistory}`);
             if (resinSpeedHistory.length > (DECLINE_THRESHOLD_MS / CHECK_INTERVAL_MS)) {
                 resinSpeedHistory.shift();
@@ -140,6 +141,7 @@ function autoTranscension() {
                 console.log(`Resin speed has been declining for ${DECLINE_THRESHOLD_MINUTES} minutes.`);
                 console.log(`resin speed history: ${resinSpeedHistory}`);
                 console.log(`Executing transcension...`);
+                resinSpeedHistory = [];
                 executeTranscension();
             }
         }
